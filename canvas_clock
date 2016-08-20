@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>canvas-clock</title>
+	<style>
+		*{margin:0px;padding:0px;}
+		.canvasbox{margin:50px auto;background:#dadada;width:500px;}
+	</style>
+</head>
+<body>
+	<canvas id="canvas" width="500" height="500">您的浏览器不支持canvas标签，请升级浏览器在查看此页面！</canvas>
+	<script>
+		var canvas = document.getElementById("canvas");
+		var context = canvas.getContext("2d");				//获取canvas的2d上下文对象
+		function init(){					//定义一个初始化函数
+			context.clearRect(0,0,500,500);			//先清除画布上的所有头像
+
+			var date = new Date;			//获取系统时间
+			var hours = date.getHours();
+
+			hours = hours>12 ? hours-12 : hours;		//因为钟表是12小时制，所以必须对时刻度进行控制
+			var minutes = date.getMinutes();
+			var seconds = date.getSeconds();
+
+			context.beginPath();		//开始画表盘
+			context.arc(250,250,200,0,360,false)		//在画布中心250,250点上画一个圈
+			context.lineWidth = 10;		//定义画笔的宽度
+			context.strokeStyle = "#000";		//定义画笔颜色
+			context.closePath();			//关闭画笔路径
+			context.stroke()				//上色
+
+			//开始画刻度
+			//时刻度
+			for (var h = 0;h < 12;h++) {
+				context.save();				//现将图像进行保存
+				context.lineWidth = 8;
+				context.strokeStyle = "#f00";
+
+				context.translate(250,250);		//定义旋转中心点
+				context.rotate(h*30*Math.PI/180);		//定义旋转角度
+				context.beginPath();
+				context.moveTo(0,190);
+				context.lineTo(0,170);
+				context.closePath();
+				context.stroke();
+				context.restore();		//将之前的保存的图像显示，形成新的图像	
+			}
+
+			//分刻度
+			for (var m = 0;m < 60;m++){
+				context.save();
+				context.lineWidth = 4;
+				context.strokeStyle = "red";
+				context.translate(250,250);
+				context.rotate(m*6*Math.PI/180);
+				context.beginPath();
+				context.moveTo(0,190);
+				context.lineTo(0,180);
+				context.closePath();
+				context.stroke();
+				context.restore();
+			}
+
+			//画时针
+			context.save();
+			context.lineWidth = 8;
+			context.strokeStyle = "#000";
+			context.translate(250,250);
+			context.rotate(h*30*Math.PI/180);
+			context.beginPath();
+			context.moveTo(0,10);
+			context.lineTo(0,-100);
+			context.closePath();
+			context.stroke();
+			context.restore();
+
+			//画分针
+			context.save();
+			context.lineWidth = 4;
+			context.strokeStyle = "#000";
+			context.translate(250,250);
+			context.rotate(minutes*6*Math.PI/180);
+			context.beginPath();
+			context.moveTo(0,10);
+			context.lineTo(0,-140);
+			context.closePath();
+			context.stroke();
+			context.restore();
+
+			//画秒针
+			context.save();
+			context.lineWidth = 2;
+			context.strokeStyle = "blue";
+			context.translate(250,250);
+			context.rotate(seconds*6*Math.PI/180);
+			context.beginPath();
+			context.moveTo(0,10);
+			context.lineTo(0,-170);
+			context.closePath();
+			context.stroke();
+			context.restore();
+		}
+
+		//调用定时器，在每秒刷新重绘新图像
+		setInterval(init,1000);
+	</script>
+</body>
+</html>
